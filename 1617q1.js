@@ -71,47 +71,48 @@ function oxoguanine_repair(xs) {
 
 function find_gene_start(xs) {
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /*const yss = list('A','T','G');
-
-    function helper1(xs, ys) {
-        return is_null(ys) && is_null(xs)
-               ? null 
-               : is_null(ys)
-               ? xs
-               : is_null(xs)
-               ? undefined // not found
-               : head(xs) === head(ys)
-               ? helper1(tail(xs),tail(ys))
-               : 'next';
+    let s = null;
+    let a = null;
+    function push(x) {
+        s = pair(x, s);
+        
+    }
+    function push1(x) {
+        a = pair(x, a);
     }
     
-    function helper2(xs, yss) {
-        const first = helper1(xs, yss);
-        return first === 'next'
-               ? helper2(tail(xs), yss)
-               : is_undefined(first)
-               ? null 
-               : list(first);
-              
+    function pop() {
+        const temp = head(s);
+        
+        s = tail(s);
+        return temp;
     }
     
-    
-    return helper2(xs, yss);
+    function same(xs, ys) {
+        if (is_null(xs) && is_null(ys)) {
+            return true;
+        } else if (head(xs) === head(ys)) {
+            return same(tail(xs), tail(ys));
+        } else {
+            return false;
+        }
     }
-*/
-
-
-
+    
+    const len = length(xs);
+    for (let r = 0; r < len; r = r + 1){
+        push(list_ref(xs, r));
+        if (r > 1) {
+            if 
+        }
+    } 
+    for (let r = 0; r < len - 2; r = r + 1){
+        const i = pop();
+        push1(i);
+        if ()
+        
+    } 
+    
+}
 
 ////////////////////////////////////////////////////////////
 // Question 1F
@@ -119,34 +120,6 @@ function find_gene_start(xs) {
 
 function find_gene_end(xs) {
     xs = reverse(xs);
-    
-    function find_gene_start(xs, yss) {
-
-        function helper1(xs, ys) {
-        return is_null(ys) && is_null(xs)
-               ? null 
-               : is_null(ys)
-               ? xs
-               : is_null(xs)
-               ? undefined // not found
-               : head(xs) === head(ys)
-               ? helper1(tail(xs),tail(ys))
-               : 'next';
-    }
-    
-        function helper2(xs, yss) {
-        const first = helper1(xs, yss);
-        return first === 'next'
-               ? helper2(tail(xs), yss)
-               : is_undefined(first)
-               ? null 
-               : list(first);
-              
-    }
-    
-        return helper2(xs, yss);
-
-}
 
     const tag = find_gene_start(xs, list('G','A','T'));
     const taa = find_gene_start(xs, list('A','A','T'));
