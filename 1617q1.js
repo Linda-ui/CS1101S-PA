@@ -70,7 +70,18 @@ function oxoguanine_repair(xs) {
 ////////////////////////////////////////////////////////////
 
 function find_gene_start(xs) {
-    const yss = list('A','T','G');
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /*const yss = list('A','T','G');
 
     function helper1(xs, ys) {
         return is_null(ys) && is_null(xs)
@@ -96,8 +107,9 @@ function find_gene_start(xs) {
     
     
     return helper2(xs, yss);
+    }
+*/
 
-}
 
 
 
