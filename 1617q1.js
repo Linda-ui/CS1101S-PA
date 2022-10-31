@@ -70,91 +70,111 @@ function oxoguanine_repair(xs) {
 ////////////////////////////////////////////////////////////
 
 function find_gene_start(xs) {
-    
-    let s = null;
-    let a = null;
-    function push(x) {
-        s = pair(x, s);
-        
-    }
-    function push1(x) {
-        a = pair(x, a);
-    }
-    
-    function pop() {
-        const temp = head(s);
-        
-        s = tail(s);
-        return temp;
-    }
-    
-    function same(xs, ys) {
-        if (is_null(xs) && is_null(ys)) {
-            return true;
-        } else if (head(xs) === head(ys)) {
-            return same(tail(xs), tail(ys));
-        } else {
-            return false;
-        }
-    }
-    
-    const len = length(xs);
-    for (let r = 0; r < len; r = r + 1){
-        push(list_ref(xs, r));
-        if (r > 1) {
-            if 
-        }
-    } 
-    for (let r = 0; r < len - 2; r = r + 1){
-        const i = pop();
-        push1(i);
-        if ()
-        
-    } 
-    
-}
+     let temp = -1;
+     const ys = list('A','T','G');
+     function same(xs, ys) {
+         if (is_null(xs) &&is_null(ys)) {
+             return true;
+         } else if (head(xs)===head(ys)) {
+             return same(tail(xs),tail(ys));
+         } else {
+             return false;
+         }
+     }
+     for (let r = 0; r < length(xs) - 2; r = r + 1) {
+         const xss = list(
+             list_ref(xs, r),
+             list_ref(xs, r + 1),
+             list_ref(xs, r + 2));
+         if (same(ys, xss)) {
+             temp = r + 3;
+             break;
+         }
+     }
+     if (temp === -1) {
+         return null;
+     } else {
+         return list(build_list(n => list_ref(xs, temp+n), length(xs)-temp));
+     }
+} 
+     
 
 ////////////////////////////////////////////////////////////
 // Question 1F
 ////////////////////////////////////////////////////////////
 
 function find_gene_end(xs) {
-    xs = reverse(xs);
-
-    const tag = find_gene_start(xs, list('G','A','T'));
-    const taa = find_gene_start(xs, list('A','A','T'));
-    const tga = find_gene_start(xs, list('A','G','T'));
-    display_list(tag, 'tag');
-    display_list(taa, 'taa');
-    display_list(tga, 'tga');
+    function find_gene_start1(xs) {
+     let temp = -1;
+     const ys1 = list('G','A','T');
+     const ys2 = list('A','A','T');
+     const ys3 = list('A','G','T');
+     function same(xs, ys) {
+         if (is_null(xs) &&is_null(ys)) {
+             return true;
+         } else if (head(xs)===head(ys)) {
+             return same(tail(xs),tail(ys));
+         } else {
+             return false;
+         }
+     }
+     for (let r = 0; r < length(xs) - 2; r = r + 1) {
+         const xss = list(
+             list_ref(xs, r),
+             list_ref(xs, r + 1),
+             list_ref(xs, r + 2));
+         if (same(ys1, xss) ||same(ys2, xss)||same(ys3, xss)) {
+             temp = r + 3;
+             
+         }
+     }
+     
+     if (temp === -1) {
+         return null;
+     } else {
+         return list(build_list(n => list_ref(xs, temp+n), length(xs)-temp));
+     }
+} 
     
-    if (is_null(tag) && is_null(taa) && is_null(tga)) {
+    const i = find_gene_start1(reverse(xs));
+    
+    if (is_null(i)) {
         return null;
     } else {
-        const next = !is_null(tag)
-               ? reverse(tag)
-               : !is_null(tga)
-               ? reverse(tga)
-               : !is_null(taa)
-               ? reverse(taa)
-               : 'error';
-        display(next, 'next');
-        const nextend = find_gene_end(head(next));      
-        return !is_null(nextend)
-               ? nextend
-               : next;
+        set_head(i, reverse(head(i))); 
+        
+        return i;
     }
+            
+    
 }
 
 
-/*
+
 ////////////////////////////////////////////////////////////
 // Question 1G
 ////////////////////////////////////////////////////////////
 
 function all_genes(xs) {
-
-    // WRITE HERE.
+    //func1 gets the string containing stop codon
+    display(xs);
+    let s = list();
+    function helper1(xs) {
+        if (is_null(xs)) {
+            s = pair(s, null);
+        }
+        const gene = find_gene_start(xs);
+        display(gene,'gene');
+        if (!is_null(gene)) {
+            const allel = find_gene_end(head(gene));
+            display(allel,'allel');
+            s = append(s, allel);
+            helper1(find_gene_start(head(gene)));
+        }
+               
+    }
+    helper1(xs);
+    return s;
 
 }
 
@@ -164,7 +184,7 @@ function all_genes(xs) {
 ////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////
 
-*/
+
 //===========================================================
 // This function is provided for running the testcases
 // in the Source Academy Playground.
@@ -593,7 +613,7 @@ assert(
 );
 
 
-/*
+
 ////////////////////////////////////////////////////////////
 // Test Cases for Q1G
 ////////////////////////////////////////////////////////////
@@ -627,4 +647,3 @@ assert(
     "Q1G-P03",
     ['all_genes']
 );
-*/
