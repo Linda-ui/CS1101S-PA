@@ -84,7 +84,16 @@ shortest_paper_route(n, mat, 1);
 // returns pair(list(1, 0, 2, 3, 1), 12)
 
 
+//3A
 
+function make_postfix_exp(bae) {
+    //pfe is a stack
+    const pfe = [];
+    
+    function push(x) {
+        
+    }
+}
 
 
 
