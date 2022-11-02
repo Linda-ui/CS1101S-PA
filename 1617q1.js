@@ -24,15 +24,7 @@ function is_nucleobase(s) {
 
 function is_dna_strand(xs) {
 
-    const len = length(xs);
-    let flag = true;
-    for (let r = 0; r < len; r = r + 1) {
-        if (!is_nucleobase(list_ref(xs, r))) {
-            flag = false;
-            break;
-        }
-    }
-    return flag;
+    return accumulate((x, y) => y && is_nucleobase(x), true, xs);
 
 }
 
@@ -56,10 +48,7 @@ function combine(xss) {
 ////////////////////////////////////////////////////////////
 
 function oxoguanine_repair(xs) {
-    return build_list(
-        (x => list_ref(xs, x) === '8' 
-             ? 'G'
-             : list_ref(xs, x)), length(xs));
+    return map(x => x === '8' ? 'G' : x, xs);
 
 }
 
@@ -156,25 +145,18 @@ function find_gene_end(xs) {
 ////////////////////////////////////////////////////////////
 
 function all_genes(xs) {
-    //func1 gets the string containing stop codon
-    display(xs);
-    let s = list();
-    function helper1(xs) {
-        if (is_null(xs)) {
-            s = pair(s, null);
+    const start = find_gene_start(xs);
+    if (is_null(start)) {
+        return null;
+    } else {
+        const end = find_gene_end(head(start));
+        if (is_null(end)) {
+            return null;
+        } else {
+            return pair(head(end), all_genes(head(start)));
         }
-        const gene = find_gene_start(xs);
-        display(gene,'gene');
-        if (!is_null(gene)) {
-            const allel = find_gene_end(head(gene));
-            display(allel,'allel');
-            s = append(s, allel);
-            helper1(find_gene_start(head(gene)));
-        }
-               
     }
-    helper1(xs);
-    return s;
+    
 
 }
 
