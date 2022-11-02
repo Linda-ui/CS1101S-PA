@@ -74,7 +74,7 @@ function shortest_paper_route(n, mat, start) {
         }
     }
     
-    return min(100, allroutes, head(allroutes));
+    return min(Infinity, allroutes, head(allroutes));
     
 }
 
