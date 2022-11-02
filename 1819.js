@@ -88,14 +88,7 @@ assert("1A_5", () => make_big_int_from_number(9876543210),
 //===============================================================
 function big_int_to_string(bint) {
 
-    const len = length(bint);
-    display(len,'len');
-    let res = 0;
-    for (let r = 1 ; r <= len; r = r + 1) {
-        res = res + math_pow(10,r - 1) * list_ref(bint, r - 1);
-    }
-   display(res);
-    return stringify(res);
+    return accumulate((x, y) => y + stringify(x), '', bint);
 
 }
 
@@ -199,15 +192,9 @@ assert("1D_4", () => big_int_mult_by_digit(
 //===============================================================
 function big_int_mult_by_10_pow_n(bint, n) {
 
-    const len = length(bint);
-    
-    let res = 0;
-    for (let r = 1 ; r <= len; r = r + 1) {
-        res = res + math_pow(10,r - 1) * list_ref(bint, r - 1);
-    }
-   
-    const output = res * math_pow(10, n);
-    return make_big_int_from_number(output);
+    return (equal(bint, list(0)) || n === 0)
+        ? bint
+        : pair(0, big_int_mult_by_10_pow_n(bint, n - 1));
 
 }
 
@@ -384,15 +371,9 @@ function digits_to_string(digits) {
 function build_largest_int(digits) {
 
     sort_ascending(digits);
-    const len = array_length(digits);
-    let res = 0;
-    
-    for (let r = 1 ; r <= len; r = r + 1) {
-        
-        
-        res = res + digits[r - 1] * math_pow(10, r - 1);
-    }
-    return stringify(res);
+    reverse_array(digits);
+    const l = array_to_list(digits);
+    return accumulate((x,y) => stringify(x) + y, '', l);
 
 }
 
@@ -418,52 +399,23 @@ assert("2A_6", () => build_largest_int([5,5,5,5,5,5,5,5,5,5]),
 function build_2nd_largest_int(digits) {
     
     sort_ascending(digits);
-    const len = array_length(digits);
-    let res = 0;
+    reverse_array(digits);
+    let last = array_length(digits) - 1; //lastindex
+    let ptr = last;
     
-    
-    
-    
-    
-
-    /*sort_ascending(digits);
-    const len = array_length(digits);
-    
-    //findmax returns the index where the nth largest int is found
-    function findmax(lastid, n, prev) {
-        if (lastid === 0) {
-            return lastid;
-        } else {
-            const thismax = digits[lastid];
-            if (n === 1 && thismax !== prev) {
-                return lastid; //thismax is nth distinct max
-            } else if (n !== 1 && thismax !== prev) {
-                return findmax(lastid - 1, n - 1, thismax);
-            } else {
-                return findmax(lastid - 1, n, prev);
-            }
-            }
-        }
-        
-    const id = findmax(len - 1, 2, digits[len - 1]);
-    const n = 2;
-    let res = 0;
-    
-    
-    //builds the nth largest integer
-    //in front of id
-    for (let r = 1 ; r < id; r = r + 1) {
-        res = res + digits[r - 1] * math_pow(10, r - 1);
-        display(res, 'in front');
+    while (ptr >= 0 && digits[ptr] === digits[last]  ) {
+        last = ptr;
+        ptr = ptr - 1;
     }
-    for (let r = id + 1 ; r < len; r = r + 1) {
-        res = res + digits[r - 1] * math_pow(10, r - 2);
-        display(res, 'behind');
+    
+    if (ptr < 0) {
+        return build_largest_int(digits);
+    } else {
+        swap(digits, last, ptr);
+        const l = array_to_list(digits);
+        return accumulate((x,y) => stringify(x) + y, '', l);
     }
-    const x = res + digits[id] * math_pow(10, len - 2) + 
-    digits[len - 1] * math_pow(10, len - 1);
-    display(x, 'x');
-    return x;*/
+    
     }
 
 
@@ -477,19 +429,37 @@ assert("2B_2", () => build_2nd_largest_int([1,2,3,4,5]),
 assert("2B_3", () => build_2nd_largest_int([9,8,7]),
     "978", ["build_largest_int"]);
 assert("2B_4", () => build_2nd_largest_int([4,1,9,1,4,9,1]),
-    "9941411", ["build_largest_int"]);
+    "9941411", ["build_largest_int"]); //9944111- 9941411
 assert("2B_5", () => build_2nd_largest_int([5,5,5,5,5,5,7,5,5,5]),
     "5755555555", ["build_largest_int"]);
 assert("2B_6", () => build_2nd_largest_int([5,5,5,5,5,5,5,5,5,5]),
     "5555555555", ["build_largest_int"]);
 
-/*
+
 //===============================================================
 // TASK 2C
 //===============================================================
 function build_nth_largest_int(digits, n) {
 
-    // WRITE HERE.
+    function permutations(ys) {
+        return is_null(ys)
+            ? list(null)
+            : accumulate(append, null,
+                map(x => map(p => pair(x, p),
+                             permutations(remove(x, ys))),
+                    ys));
+    }
+
+    const S = copy_array(digits);
+    const len = array_length(S);
+    sort_ascending(S);
+    reverse_array(S);
+    const digit_lst = array_to_list(S);
+    const perms = permutations(digit_lst);
+    const nth_lst = list_ref(perms, math_min(length(perms), n) - 1);
+    const nth = list_to_array(nth_lst);
+    return digits_to_string(nth);
+    
 
 }
 
@@ -518,7 +488,7 @@ assert("2C_10", () => build_nth_largest_int([5,3,7], 10),
 assert("2C_11", () => build_nth_largest_int([5], 10),
     "5", ["build_largest_int", "build_2nd_largest_int"]);
 
-*/
+
 //===============================================================
 // QUESTION 3
 
@@ -623,43 +593,119 @@ assert("3A(II)_4", () => count_peaks(emapA2b),
     9, ["count_lower_neighbors"]);
 
 
+
 //===============================================================
 // TASK 3B
 //===============================================================
-function count_islands(emap) {
-    let x = null; //all coordinates alr searched for
+function count_islands1(emap) {
+    let t = null;
     
-    function neighbouring_land(emap, r, c) {
-     
-    if (r <= 0 || c <= 0 || r > array_length(emap) - 1 || c > array_length(emap[0]) - 1){
-        return 0;
-    }
-    
-    const x = emap[r][c];
-    
-    function helper(r, c) {
+    for (let r = 0; r <= array_length(emap) - 1; r = r + 1) {
+        const a = emap[r];
         
-        if (emap[r][c] === 0) {
-            x = pair(pair(r, c), x);
+        //l is the list containing all island pos of that row
+        const l = accumulate(
+            (x, y) => a[x] > 0 ? pair(pair(r, x), y) : y,
+            null, 
+            enum_list(0, array_length(emap[0]) - 1)); 
+             
+       
+        t = append(l, t);
+        
+    }
+    function is_member(pair, xs) {
+        if (is_null(xs)) {
+            return false;
+        } else if (head(pair) === head(head(xs)) && tail(pair) === tail(head(xs))){
+            return true;
+            
+        } else {
+            return is_member(pair, tail(xs));
+        }   
+        
+    }
+    t = reverse(t);
+    display(t);
+    let count = 0;
+    let a = null;
+    for (let r = 0; r <= length(t) - 1; r = r + 1) {
+        const is = list_ref(t, r);
+        const thisr = head(is);
+        const thisc = tail(is);
+        if (thisr !== 0 && thisc !== 0) {
+            if (!(is_member(pair(thisr - 1, thisc), t)) &&
+            !(is_member(pair(thisr, thisc - 1), t))) {
+               display(thisr, 'thisr');
+                display(thisc, 'thisc');
+                
+                count = count + 1;
+            } 
+        } else if (thisr !== 0) {
+            if (!(is_member(pair(thisr - 1, thisc), t))) {
+               display(thisr, 'thisr');
+                display(thisc, 'thisc');
+                count = count + 1;
+            }
+        } else if (thisc !== 0 ){
+            if (!(is_member(pair(thisr, thisc - 1), t))) {
+                display(thisr, 'thisr');
+                display(thisc, 'thisc');
+                count = count + 1;
+            }
+        } else {
+            count = count + 1;
         }
     }
-    helper(r, c - 1);
-    helper(r, c + 1);
-    helper(r - 1, c);
+    display(count);
     
-    //helper(r + 1, c - 1);
-    //helper(r - 1, c - 1);
-    //helper(r - 1, c + 1);
-    helper(r + 1, c);
-    //helper(r + 1, c +1 );
-
-    return ;
-
-}
-
+    return count;
     
 
 }
+
+function count_islands(emap) {
+    // WRITE HERE.
+    // ---BEGIN TASK---
+    const R = array_length(emap);    // emap size is R x C.
+    const C = array_length(emap[0]); // emap size is R x C.
+    const label = [];                // 2D array for labelling islands.
+    let island_count = 0;
+
+    // The function island "floods" an entire island with
+    // the label island_id, starting from the position (row, col).
+    function label_island(row, col, island_id) {
+        if ( row >= 0 && row < R && col >= 0 && col < C ) {
+            if ( emap[row][col] !== 0 && label[row][col] === 0 ) {
+                label[row][col] = island_id;
+                label_island(row, col - 1, island_id);
+                label_island(row, col + 1, island_id);
+                label_island(row - 1, col, island_id);
+                label_island(row + 1, col, island_id);
+            } else {}
+        } else {}
+    }
+
+    // The labels are initialized to 0.
+    // The islands are going to be labelled from 1 onwards.
+    for (let row = 0; row < R; row = row + 1) {
+        label[row] = [];
+        for (let col = 0; col < C; col = col + 1) {
+            label[row][col] = 0;
+        }
+    }
+
+    for (let row = 0; row < R; row = row + 1) {
+        for (let col = 0; col < C; col = col + 1) {
+            if (emap[row][col] !== 0 && label[row][col] === 0) {
+                island_count = island_count + 1;
+                label_island(row, col, island_count);
+            } else {}
+        }
+    }
+    return island_count;
+    // ---END TASK---
+}
+
 
 
 // TASK 3B TESTS
