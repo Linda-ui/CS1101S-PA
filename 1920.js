@@ -51,42 +51,26 @@ function route_distance(mat, route) {
 //2B
 function shortest_paper_route(n, mat, start) {
     //recursively find the shortest route
-    function permutations(xs) {
-    if ( length(xs) === 1 ) {
-        // Base case exists
-        return list(xs);
-    } else {
-        // Remove x from xs
-        function remove(x,xs) {
-            return filter( y => x !== y, xs );
-        }
-        
-        // Append x to the permutations of xs
-        function add(x,xs) {
-            const perms = permutations(xs);
-            return map(y => pair(x,y), perms);
-        }
-        
-        // Mapping above steps to each term of xs
-        const e = map( x => add( x,remove(x,xs) ), xs );
-        
-        // Putting the lists altogether
-        return accumulate(append, null, e);
-    }
+    function permutations(s) {
+    return is_null(s) 
+           ? list(null)
+           : accumulate(append, null, map(x => map(p => pair(x, p), permutations(remove(x,s))),
+             s));
 }   
-    const thelist = list(1,1,2,2);//append(list(start), enum_list(0, n - 1));
-    const allroutes = permutations(thelist);
+    const restlist = remove(start, enum_list(0, n - 1));
+    const allroutes1 = permutations(restlist);
+    const allroutes = map(x => append(append(list(start), x), list(start)), allroutes1);
     display_list(allroutes);
     
-    function min(min, rs, route) {
+    function min(min1, rs, route) {
         if (is_null(rs)) {
-            return pair(route, min);
+            return pair(route, min1);
         } else {
             const dis = route_distance(mat, head(rs));
-            if (dis < min) {
+            if (dis < min1) {
                 return min(dis, tail(rs), head(rs));
             }
-            return min(min, tail(rs), route);
+            return min(min1, tail(rs), route);
         }
     }
     
