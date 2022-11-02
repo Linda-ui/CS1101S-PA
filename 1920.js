@@ -87,20 +87,86 @@ shortest_paper_route(n, mat, 1);
 //3A
 
 function make_postfix_exp(bae) {
-    //pfe is a stack
-    const pfe = [];
-    
+    //pfe is a stack(list), later convert to array
+    let pfe = null;
+
     function push(x) {
-        
+        pfe = pair(x, pfe);
     }
+    
+    function pop() {
+        let temp = head(pfe);
+        pfe = tail(pfe);
+        return temp;
+    }
+    
+    function list2arr(xs) {
+        let a = [];
+        for (let r = 0; r < length(xs); r = r + 1) {
+            a[r] = list_ref(xs, r);
+        }
+        return a;
+    }
+    
+    function helper(bae) {
+        if (is_number(bae)) {
+            push(bae);
+        } else if (is_array(bae)) {
+            push(bae[1]);
+            helper(bae[2]);
+            helper(bae[0]);
+        }
+    }
+    
+    helper(bae);
+    return list2arr(pfe);
+    
 }
 
+const bae = [ [8, "-", 2], "*", [7, "+", 3] ];
+make_postfix_exp(bae);  
 
 
+//3B
+function eval_postfix_exp(pfe) {
+    
+    let s = null;
 
+    function push(x) {
+        s = pair(x, s);
+    }
+    
+    function pop() {
+        let temp = head(s);
+        s = tail(s);
+        return temp;
+    }
+    
+    for (let r = 0; r < array_length(pfe); r = r + 1) {
+        const item = pfe[r];
+        if (is_number(item)) {
+            push(item);
+        } else {
+            const a = pop();
+            const b = pop();
+            
+            const res = item === '-'
+                        ? b - a 
+                        : item === '+'
+                        ? b + a 
+                        : item === '*'
+                        ? b * a
+                        : b / a;
+                        
+            push(res);
+        }
+    }
+    return pop();
+    
+}
 
-
-
+const pfe = [8, 2, "-", 7, 3, "+", "*"];
+eval_postfix_exp(pfe);
 
 
 
