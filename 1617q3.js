@@ -81,10 +81,28 @@ function build_BAE_tree(bae_list) {
     
     return head(s);
 } 
+/*
+let next_token = bae_list;
 
+    function build_tree() {
+        if (equal(head(next_token), "(")) {
+            next_token = tail(next_token);
+            const left_tree = build_tree();
+            const op = head(next_token);
+            next_token = tail(next_token);
+            const right_tree = build_tree();
+            next_token = tail(next_token); // skip over ")"
+            return list(left_tree, op, right_tree);
+        } else { // token is a number
+            const token = head(next_token);
+            next_token = tail(next_token);
+            return token;
+        }
+    }
 
+    return build_tree();
 
-
+*/
 ////////////////////////////////////////////////////////////
 // Question 3C
 ////////////////////////////////////////////////////////////
