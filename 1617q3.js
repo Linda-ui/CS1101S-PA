@@ -37,51 +37,7 @@ function evaluate_BAE_tree(bae_tree) {
 ////////////////////////////////////////////////////////////
 
 function build_BAE_tree(bae_list) {
-    let s = null;
-    
-    function push(x) {
-        s = pair(x, s);
-        
-    }
-    
-    function pop() {
-        const temp = head(s);
-        
-        s = tail(s);
-        return temp;
-    }
-    if (is_number(head(bae_list))) {
-        return head(bae_list);
-    }
-    
-    bae_list = tail(bae_list);
-    
-    
-    while (!is_null(bae_list)) {
-        const i = head(bae_list);
-        
-        bae_list = tail(bae_list);
-        
-        if (i === '(') {
-            
-        } else if (i === ')') {
-            
-            const c = pop();
-            const b = pop();
-            const a = pop();
-            const newitem = list(a, b, c);
-            push(newitem);
-            
-            
-        } else {
-            push(i);
-            
-        }
-    }
-    
-    return head(s);
-} 
-/*
+
 let next_token = bae_list;
 
     function build_tree() {
@@ -102,7 +58,7 @@ let next_token = bae_list;
 
     return build_tree();
 
-*/
+
 ////////////////////////////////////////////////////////////
 // Question 3C
 ////////////////////////////////////////////////////////////
